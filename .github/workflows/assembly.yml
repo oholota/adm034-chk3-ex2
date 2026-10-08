@@ -244,9 +244,6 @@ jobs:
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
-      - name: Force a failure
-        run: exit 1
-
       - name: Write the pipeline summary
         env:
           BUILD_CAR: ${{ needs.build_car.result }}
