@@ -237,3 +237,28 @@ jobs:
           name: truck-files-failure
           path: build/truck.txt
           retention-days: 3
+
+  quality_report:
+    needs: [build_car, build_motorbike, build_truck, test_car, test_motorbike, test_truck, deploy_car, deploy_motorbike, deploy_truck]
+    if: always()
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - name: Write the pipeline summary
+        env:
+          BUILD_CAR: ${{ needs.build_car.result }}
+          BUILD_MOTORBIKE: ${{ needs.build_motorbike.result }}
+          BUILD_TRUCK: ${{ needs.build_truck.result }}
+          TEST_CAR: ${{ needs.test_car.result }}
+          TEST_MOTORBIKE: ${{ needs.test_motorbike.result }}
+          TEST_TRUCK: ${{ needs.test_truck.result }}
+          DEPLOY_CAR: ${{ needs.deploy_car.result }}
+          DEPLOY_MOTORBIKE: ${{ needs.deploy_motorbike.result }}
+          DEPLOY_TRUCK: ${{ needs.deploy_truck.result }}
+        run: |
+          echo "## Quality Report" >> $GITHUB_STEP_SUMMARY
+          echo "| Vehicle | Build | Test | Deploy |" >> $GITHUB_STEP_SUMMARY
+          echo "|---------|-------|------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Car | $BUILD_CAR | $TEST_CAR | $DEPLOY_CAR |" >> $GITHUB_STEP_SUMMARY
+          echo "| Motorbike | $BUILD_MOTORBIKE | $TEST_MOTORBIKE | $DEPLOY_MOTORBIKE |" >> $GITHUB_STEP_SUMMARY
+          echo "| Truck | $BUILD_TRUCK | $TEST_TRUCK | $DEPLOY_TRUCK |" >> $GITHUB_STEP_SUMMARY
